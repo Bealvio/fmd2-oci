@@ -28,7 +28,7 @@ services:
     ports:
       - 6080:6080
     volumes:
-      - ./data:/home/fmd2/.wine/drive_c/app/FMD2/data
+      - ./data:/home/fmd2/.wine
       - ./userdata:/home/fmd2/.wine/drive_c/app/FMD2/userdata
       - ./downloads:/downloads
     restart: unless-stopped
