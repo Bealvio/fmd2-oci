@@ -102,7 +102,7 @@ let
         ''
           Xvfb :1 -screen 0 1920x1080x16 &  # Start virtual display
           x11vnc -display :1 -noipv6 -reopen -forever -repeat -loop -rfbport 5900 -noxdamage &
-          websockify -D --web=/home/fmd2/.wine/drive_c/novnc 6080 localhost:5900 &
+          websockify -D --web=/home/fmd2/.wine/drive_c/novnc 6080 0.0.0.0:5900 &
           monitor-changes /home/fmd2/.wine/drive_c/app/FMD2/downloads /downloads
           openbox-session &
           cd /home/fmd2/.wine/drive_c/app/FMD2
