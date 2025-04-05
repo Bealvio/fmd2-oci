@@ -1,0 +1,26 @@
+{
+  "pins": {
+    "fmd2": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "dazedcat19",
+        "repo": "fmd2"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "version": "2.0.34.5",
+      "revision": "64fe87d04a0bf6ff371d79f3575e10e8d55d7f77",
+      "url": "https://api.github.com/repos/dazedcat19/fmd2/tarball/2.0.34.5",
+      "hash": "1hk92kbba346lyrzzsf6nbl895kwmr3mkqd4hj73azpq8swzqa70"
+    },
+    "nixpkgs": {
+      "type": "Channel",
+      "name": "nixpkgs-unstable",
+      "url": "https://releases.nixos.org/nixpkgs/nixpkgs-25.05pre778515.2bfc08095515/nixexprs.tar.xz",
+      "hash": "0i6c0crq8jmjrk3z6pzd2xidp6hc111a7qs8za0q4gvi3fv937n8"
+    }
+  },
+  "version": 3
+}
