@@ -144,7 +144,6 @@ let
       openssl
       coreutils
       wineWow64Packages.stable
-      wineWowPackages.stable
       winePackages.stable
       wine64
       winetricks
