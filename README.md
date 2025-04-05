@@ -29,6 +29,7 @@ services:
       - 6080:6080
     volumes:
       - ./data:/home/fmd2/.wine/drive_c/app/FMD2/data
+      - ./userdata:/home/fmd2/.wine/drive_c/app/FMD2/userdata
       - ./downloads:/downloads
     restart: unless-stopped
 ```
