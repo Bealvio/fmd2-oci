@@ -4,8 +4,8 @@
 let
   sources = import ./npins;
   inherit (sources.fmd2) version;
-  dockerVersion = "0.0.2";
-  fmd2Src = sources.fmd2;
+  dockerVersion = "0.0.3";
+  fmd2LatestSrc = sources.fmd2-latest;
   fmd2Url = "https://github.com/dazedcat19/FMD2/releases/download/${version}/fmd_${version}_x86_64-win64.7z";
   fmd2Archive = pkgs.fetchurl {
     url = fmd2Url;
@@ -25,7 +25,7 @@ let
         7z x ${fmd2Archive} -oapp/FMD2 -y
         chmod +w ./app -R
         cp ${./settings.json} $out/app/FMD2/userdata/settings.json
-        cp -r ${fmd2Src}/lua app/FMD2/
+        cp -r ${fmd2LatestSrc}/lua app/FMD2/
         cp -r ./app $out/
       '';
   monitorScript = pkgs.writeShellScriptBin "monitor-changes" ''

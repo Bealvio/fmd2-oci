@@ -15,6 +15,18 @@
       "url": "https://api.github.com/repos/dazedcat19/fmd2/tarball/2.0.34.5",
       "hash": "1hk92kbba346lyrzzsf6nbl895kwmr3mkqd4hj73azpq8swzqa70"
     },
+    "fmd2-latest": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "dazedcat19",
+        "repo": "fmd2"
+      },
+      "branch": "master",
+      "revision": "433e95ffa17783e4cbc3a356b741b9c0f08a55c2",
+      "url": "https://github.com/dazedcat19/fmd2/archive/433e95ffa17783e4cbc3a356b741b9c0f08a55c2.tar.gz",
+      "hash": "1ginxpxynbya7gg0wmpic9snkcf7kmvsgdl4awvzr3zmyq6cmzpi"
+    },
     "nixpkgs": {
       "type": "Channel",
       "name": "nixpkgs-unstable",
