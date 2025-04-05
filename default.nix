@@ -4,6 +4,7 @@
 let
   sources = import ./npins;
   inherit (sources.fmd2) version;
+  dockerVersion = "0.0.1";
   fmd2Src = sources.fmd2;
   fmd2Url = "https://github.com/dazedcat19/FMD2/releases/download/${version}/fmd_${version}_x86_64-win64.7z";
   fmd2Archive = pkgs.fetchurl {
@@ -81,7 +82,7 @@ let
   '';
   buildOciStream = pkgs.dockerTools.streamLayeredImage {
     name = "zot.bealv.io/public/fmd2-nix";
-    tag = "v${version}";
+    tag = "v${version}-v${dockerVersion}";
     created = "now";
 
     config = {
@@ -150,6 +151,7 @@ let
       winetricks
       python3
       python312Packages.websockify
+      python312Packages.requests
       x11vnc
       openbox
       xorg.xvfb
