@@ -4,7 +4,7 @@
 let
   sources = import ./npins;
   inherit (sources.fmd2) version;
-  dockerVersion = "0.0.3";
+  dockerVersion = "0.0.10";
   fmd2LatestSrc = sources.fmd2-latest;
   fmd2Url = "https://github.com/dazedcat19/FMD2/releases/download/${version}/fmd_${version}_x86_64-win64.7z";
   fmd2Archive = pkgs.fetchurl {
@@ -24,7 +24,7 @@ let
         cp -r ./novnc $out/
         7z x ${fmd2Archive} -oapp/FMD2 -y
         chmod +w ./app -R
-        cp ${./settings.json} $out/app/FMD2/userdata/settings.json
+        cp ${./settings.json} $out/app/FMD2/settings.json
         cp -r ${fmd2LatestSrc}/lua app/FMD2/
         cp -r ./app $out/
       '';
@@ -103,25 +103,41 @@ let
         ''
           Xvfb :1 -screen 0 1920x1080x16 &  # Start virtual display
           x11vnc -display :1 -noipv6 -reopen -forever -repeat -loop -rfbport 5900 -noxdamage &
-          websockify -D --web=/home/fmd2/.wine/drive_c/novnc 6080 0.0.0.0:5900 &
-          monitor-changes /home/fmd2/.wine/drive_c/app/FMD2/downloads /downloads
+          websockify -D --web=/novnc 6080 0.0.0.0:5900 &
+          monitor-changes /app/FMD2/downloads /downloads
           openbox-session &
           sleep 20
-          cd /home/fmd2/.wine/drive_c/app/FMD2
+          cd /app/FMD2
+          if [ ! -f /app/FMD2/userdata/settings.json ]; then
+            cp /app/FMD2/settings.json /app/FMD2/userdata/settings.json
+          fi
+          sudo chown 1000:1000 -R /home/fmd2/.wine
+          sudo chmod +w -R /home/fmd2/.wine
+          sudo chown 1000:1000 -R /app
+          sudo chmod +w -R /app
           wine fmd.exe
         ''
       ];
     };
 
     fakeRootCommands = ''
-      mkdir -p tmp home/fmd2/.wine/drive_c downloads home/fmd2/.config/openbox
+      mkdir -p tmp home/fmd2/.wine/drive_c downloads home/fmd2/.config/openbox app/FMD2
       cp -rL ${./openbox.xml} home/fmd2/.config/openbox/rc.xml
       chown 1000:1000 downloads
       chmod +w downloads
       chmod 777 -R tmp
-      cp -rL ${fmd2App}/* ./home/fmd2/.wine/drive_c
+      cp -rL ${fmd2App}/* ./
       chown 1000:1000 -R home/fmd2
+      chown 1000:1000 -R home/fmd2/.wine
+      chown 0:0 usr/bin/sudo && chmod 4755 usr/bin/sudo
       chmod ug+w -R home/fmd2
+      chown 1000:1000 -R app
+      chmod ug+w -R app
+    '';
+
+    extraCommands = ''
+      mkdir -p usr/bin
+      cp -L ${pkgs.sudo}/bin/sudo usr/bin
     '';
 
     contents = with pkgs; [
@@ -155,6 +171,66 @@ let
           requests
         ]
       ))
+      (pkgs.writeTextDir "etc/sudoers" ''
+        root     ALL=(ALL:ALL)    SETENV: ALL
+        %wheel  ALL=(ALL:ALL)    NOPASSWD:SETENV: ALL
+        fmd2 ALL=(ALL) NOPASSWD:ALL
+        Defaults:root,%wheel env_keep+=TERMINFO_DIRS
+        Defaults:root,%wheel env_keep+=TERMINFO
+      '')
+      (pkgs.runCommand "config-sudo" { } ''
+        mkdir -p $out/etc/pam.d/backup
+        cat > $out/etc/pam.d/sudo <<EOF
+        #%PAM-1.0
+        auth        sufficient  pam_rootok.so
+        auth        sufficient  pam_permit.so
+        account     sufficient  pam_permit.so
+        account     required    pam_warn.so
+        session     required    pam_permit.so
+        password    sufficient  pam_permit.so
+        EOF
+        cat > $out/etc/pam.d/su <<EOF
+        #%PAM-1.0
+        auth        sufficient  pam_rootok.so
+        auth        sufficient  pam_permit.so
+        account     sufficient  pam_permit.so
+        account     required    pam_warn.so
+        session     required    pam_permit.so
+        password    sufficient  pam_permit.so
+        EOF
+        cat > $out/etc/pam.d/system-auth <<EOF
+        #%PAM-1.0
+        auth        required      pam_env.so
+        auth        sufficient    pam_rootok.so
+        auth        sufficient    pam_permit.so
+        auth        sufficient    pam_unix.so try_first_pass nullok
+        auth        required      pam_deny.so
+        account     sufficient    pam_permit.so
+        account     required      pam_unix.so
+        password    sufficient    pam_permit.so
+        password    required      pam_unix.so
+        session     required      pam_unix.so
+        session     optional      pam_permit.so
+        EOF
+        cat > $out/etc/pam.d/login <<EOF
+        #%PAM-1.0
+        auth        required      pam_env.so
+        auth        sufficient    pam_rootok.so
+        auth        sufficient    pam_permit.so
+        auth        sufficient    pam_unix.so try_first_pass nullok
+        auth        required      pam_deny.so
+        account     sufficient    pam_permit.so
+        account     required      pam_unix.so
+        password    sufficient    pam_permit.so
+        password    required      pam_unix.so
+        session     required      pam_unix.so
+        session     optional      pam_permit.so
+        EOF
+        cat >> $out/etc/sudoers <<EOF
+        root     ALL=(ALL:ALL)    NOPASSWD:SETENV: ALL
+        %wheel  ALL=(ALL:ALL)    NOPASSWD:SETENV: ALL
+        EOF
+      '')
       python312Packages.websockify
       python312Packages.requests
       x11vnc
