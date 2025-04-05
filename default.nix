@@ -105,6 +105,7 @@ let
           websockify -D --web=/home/fmd2/.wine/drive_c/novnc 6080 0.0.0.0:5900 &
           monitor-changes /home/fmd2/.wine/drive_c/app/FMD2/downloads /downloads
           openbox-session &
+          sleep 20
           cd /home/fmd2/.wine/drive_c/app/FMD2
           wine fmd.exe
         ''
