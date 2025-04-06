@@ -6,8 +6,6 @@ Dockerized FMD2 (Windows with Wine) using VNC, noVNC and webSocketify to display
 
 <https://github.com/dazedcat19/FMD2>
 
-<https://hub.docker.com/r/banhcanh/docker-fmd2>
-
 Make sure to configure it using the 'web' ui.
 
 ## Features
@@ -28,8 +26,9 @@ services:
     ports:
       - 6080:6080
     volumes:
-      - ./data:/home/fmd2/.wine
-      - ./userdata:/home/fmd2/.wine/drive_c/app/FMD2/userdata
+      - ./wine:/home/fmd2/.wine
+      - ./data:/app/FMD2/data
+      - ./userdata:/app/FMD2/userdata
       - ./downloads:/downloads
     restart: unless-stopped
 ```

@@ -43,3 +43,9 @@ jobs:
           ${{ env.REGISTRY_USER }}:${{ env.REGISTRY_PASSWORD }} \
           docker-archive:oci.tar \
           docker://$IMAGE_FULLNAME
+
+          echo "$IMAGE_FULLNAME" | sed s,$REGISTRY/public/fmd2-nix,${{ secrets.DOCKERHUB_USER }}/docker-fmd2,g
+          skopeo copy --insecure-policy --dest-creds \
+          ${{ secrets.DOCKERHUB_USER }}:${{ secrets.DOCKERHUB_PASSWORD }} \
+          docker-archive:oci.tar \
+          docker://$IMAGE_FULLNAME
