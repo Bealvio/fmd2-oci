@@ -2,6 +2,8 @@ name: Build & Push
 on:
   workflow_dispatch:
   push:
+    tags:
+      - '*.*.*'
 jobs:
   buildpush:
     runs-on: 'bealv-runners'
@@ -34,7 +36,7 @@ jobs:
           private-key: ${{ env.APP_PRIVATE_KEY }}
       - name: 'Sync images'
         run: |
-          $(nix-build . -A buildOciStream) > oci.tar
+          $(nix-build . -A buildOciStream --argstr dockerVersion ${{ github.ref_name }}) > oci.tar
           IMAGE_FULLNAME=$(tar -axf oci.tar manifest.json -O |jq -r '.[0].RepoTags[0]')
           skopeo --version
           skopeo copy --insecure-policy --dest-creds \

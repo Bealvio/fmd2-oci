@@ -1,10 +1,10 @@
 {
   pkgs ? import <nixpkgs> { },
+  dockerVersion ? "0.0.0",
 }:
 let
   sources = import ./npins;
   inherit (sources.fmd2) version;
-  dockerVersion = "0.0.10";
   fmd2LatestSrc = sources.fmd2-latest;
   fmd2Url = "https://github.com/dazedcat19/FMD2/releases/download/${version}/fmd_${version}_x86_64-win64.7z";
   fmd2Archive = pkgs.fetchurl {
