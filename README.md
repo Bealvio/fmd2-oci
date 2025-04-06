@@ -21,7 +21,7 @@ Make sure to configure it using the 'web' ui.
 version: '3'
 services:
   fmd2:
-    image: banhcanh/docker-fmd2:v2.0.34.5-v0.0.12
+    image: banhcanh/docker-fmd2:v2.0.34.5-v0.0.13
     container_name: fmd2
     ports:
       - 6080:6080
