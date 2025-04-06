@@ -37,6 +37,15 @@ Check <https://hub.docker.com/r/banhcanh/docker-fmd2/tags>
 
 for updated tags.
 
+## Build
+
+Using nix.
+
+```bash
+$(nix-build . -A buildOciStream) > oci.tar
+docker load -i oci.tar
+```
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
