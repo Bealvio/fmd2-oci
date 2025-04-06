@@ -56,7 +56,7 @@
     "Pass": ""
   },
   "saveto": {
-    "SaveTo": "downloads\\",
+    "SaveTo": "downloads\\mangas\",
     "ChangeUnicodeCharacter": true,
     "ChangeUnicodeCharacterStr": "_",
     "GenerateMangaFolder": true,
@@ -65,7 +65,7 @@
     "PDFQuality": 100,
     "RemoveMangaNameFromChapter": false,
     "GenerateChapterFolder": true,
-    "ChapterCustomRename": "%MANGA% - %CHAPTER%",
+    "ChapterCustomRename": "%MANGA% - %NUMBERING% -  %CHAPTER%",
     "ConvertDigitVolume": true,
     "ConvertDigitChapter": true,
     "DigitVolumeLength": 2,

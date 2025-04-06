@@ -58,6 +58,7 @@ let
           if [ ! -f /app/FMD2/userdata/settings.json ]; then
             cp /app/FMD2/settings.json /app/FMD2/userdata/settings.json
           fi
+          mkdir -p /app/FMD2/downloads/mangas
           sudo chown 1000:1000 -R /home/fmd2/.wine
           sudo chmod +w -R /home/fmd2/.wine
           sudo chown 1000:1000 -R /app
