@@ -21,7 +21,7 @@ Make sure to configure it using the 'web' ui.
 version: '3'
 services:
   fmd2:
-    image: zot.bealv.io/public/fmd2-nix:v2.0.34.5
+    image: banhcanh/docker-fmd2:v2.0.34.5-v0.0.12
     container_name: fmd2
     ports:
       - 6080:6080
@@ -32,6 +32,10 @@ services:
       - ./downloads:/app/FMD2/downloads
     restart: unless-stopped
 ```
+
+Check <https://hub.docker.com/r/banhcanh/docker-fmd2/tags>
+
+for updated tags.
 
 ## License
 
