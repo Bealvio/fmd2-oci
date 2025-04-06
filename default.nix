@@ -28,58 +28,6 @@ let
         cp -r ${fmd2LatestSrc}/lua app/FMD2/
         cp -r ./app $out/
       '';
-  monitorScript = pkgs.writeShellScriptBin "monitor-changes" ''
-    #!/bin/bash
-    set -euo pipefail
-
-    TRANSFER_FILE_TYPE=".cbz"
-    THRESHOLD_MINUTES="10"
-
-    monitor_changes() {
-      local src_dir="$1"
-      local dst_dir="$2"
-      declare -A copied_files
-
-      if [[ ! -d "$src_dir" || ! -d "$dst_dir" ]]; then
-        echo "Source or destination directory does not exist."
-        exit 1
-      fi
-
-      echo "Monitoring $src_dir for files ending with $TRANSFER_FILE_TYPE..."
-
-      while true; do
-        while IFS= read -r -d "" file; do
-          if [[ -z ${"\${copied_files[$file]+_}"} ]]; then
-            rel_parent_dir="$(basename "$(dirname "$file")")"
-            target_dir="$dst_dir/$rel_parent_dir"
-            mkdir -p "$target_dir"
-            attempt=0
-            max_attempts=10
-            rsync_success=false
-            while [[ $attempt -lt $max_attempts ]]; do
-              rsync -a "$file" "$target_dir/" && rsync_success=true && break
-              ((attempt++))
-              echo "rsync failed for $file. Retry attempt $attempt of $max_attempts..."
-              sleep 30
-            done
-            copied_files["$file"]=1
-            echo "Copied: $file -> $target_dir/"
-          fi
-        done < <(find "$src_dir" -type f -name "*$TRANSFER_FILE_TYPE" -print0)
-
-        find "$src_dir" -mindepth 1 -type d -cmin +"$THRESHOLD_MINUTES" -exec rm -r {} + 2>/dev/null || true
-
-        sleep 20
-      done
-    }
-
-    if [[ "$#" -ne 2 ]]; then
-      echo "Usage: $0 <source_dir> <destination_dir>"
-      exit 1
-    fi
-
-    monitor_changes "$1" "$2" &
-  '';
   buildOciStream = pkgs.dockerTools.streamLayeredImage {
     name = "zot.bealv.io/public/fmd2-nix";
     tag = "v${version}-v${dockerVersion}";
@@ -104,7 +52,6 @@ let
           Xvfb :1 -screen 0 1920x1080x16 &  # Start virtual display
           x11vnc -display :1 -noipv6 -reopen -forever -repeat -loop -rfbport 5900 -noxdamage &
           websockify -D --web=/novnc 6080 0.0.0.0:5900 &
-          monitor-changes /app/FMD2/downloads /downloads
           openbox-session &
           sleep 20
           cd /app/FMD2
@@ -121,10 +68,8 @@ let
     };
 
     fakeRootCommands = ''
-      mkdir -p tmp home/fmd2/.wine/drive_c downloads home/fmd2/.config/openbox app/FMD2
+      mkdir -p tmp home/fmd2/.wine/drive_c home/fmd2/.config/openbox app/FMD2
       cp -rL ${./openbox.xml} home/fmd2/.config/openbox/rc.xml
-      chown 1000:1000 downloads
-      chmod +w downloads
       chmod 777 -R tmp
       cp -rL ${fmd2App}/* ./
       chown 1000:1000 -R home/fmd2
@@ -149,7 +94,6 @@ let
           "fmd2:!:1000:"
         ];
       })
-      monitorScript
       inotify-tools
       rsync
       findutils

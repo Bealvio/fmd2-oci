@@ -35,6 +35,9 @@ jobs:
           app-id: ${{ env.APP_ID }}
           private-key: ${{ env.APP_PRIVATE_KEY }}
       - name: 'Sync images'
+        env:
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
           $(nix-build . -A buildOciStream --argstr dockerVersion ${{ github.ref_name }}) > oci.tar
           IMAGE_FULLNAME=$(tar -axf oci.tar manifest.json -O |jq -r '.[0].RepoTags[0]')
@@ -44,8 +47,9 @@ jobs:
           docker-archive:oci.tar \
           docker://$IMAGE_FULLNAME
 
-          DOCKER_IMAGE=$(echo "$IMAGE_FULLNAME" | sed s,$REGISTRY/public/fmd2-nix,${{ secrets.DOCKERHUB_USER }}/docker-fmd2,g)
+          DOCKER_IMAGE=$(echo "$IMAGE_FULLNAME" | sed s,$REGISTRY/public/fmd2-nix,$DOCKERHUB_USER/docker-fmd2,g)
+          echo $DOCKER_IMAGE
           skopeo copy --insecure-policy --dest-creds \
-          ${{ secrets.DOCKERHUB_USER }}:${{ secrets.DOCKERHUB_PASSWORD }} \
+          $DOCKERHUB_USER:$DOCKERHUB_PASSWORD \
           docker-archive:oci.tar \
           docker://$DOCKER_IMAGE

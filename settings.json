@@ -57,7 +57,7 @@
   },
   "saveto": {
     "SaveTo": "downloads\\",
-    "ChangeUnicodeCharacter": false,
+    "ChangeUnicodeCharacter": true,
     "ChangeUnicodeCharacterStr": "_",
     "GenerateMangaFolder": true,
     "MangaCustomRename": "%MANGA%",
