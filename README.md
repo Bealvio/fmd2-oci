@@ -29,7 +29,7 @@ services:
       - ./wine:/home/fmd2/.wine
       - ./data:/app/FMD2/data
       - ./userdata:/app/FMD2/userdata
-      - ./downloads:/downloads
+      - ./downloads:/app/FMD2/downloads
     restart: unless-stopped
 ```
 
